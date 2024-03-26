@@ -10,7 +10,7 @@ chai.use(sinonChai);
 chai.use(chaiHttp);
 
 const connection = require('../../../src/models/connection');
-const sales = require('../../../src/models/sales.model');
+const { salesModel } = require('../../../src/models');
 
 describe('Testando o model de vendas', function () {
   afterEach(function () {
@@ -34,7 +34,7 @@ describe('Testando o model de vendas', function () {
         },
       ],
     ]);
-    const result = await sales.findAll();
+    const result = await salesModel.findAll();
     expect(result).to.be.an('array');
     expect(result.length).to.be.equal(2);
   });
@@ -49,14 +49,36 @@ describe('Testando o model de vendas', function () {
         },
       ],
     ]);
-    const result = await sales.findById(1);
+    const result = await salesModel.findById(1);
     expect(result).to.be.an('array');
     expect(result.length).to.be.equal(1);
   });
 
   it('Verifica se quando nulo a função findSalesById retorna null', async function () {
     sinon.stub(connection, 'query').resolves([[]]);
-    const result = await sales.findById(1);
+    const result = await salesModel.findById(1);
     expect(result).to.be.equal(null);
+  });
+
+  it('Verifica a função create', async function () {
+    sinon.stub(connection, 'query').resolves([
+      { insertId: 1 },
+      {},
+    ]);
+    const result = [
+      {
+        productId: 1,
+        quantity: 2,
+      },
+      {
+        productId: 2,
+        quantity: 2,
+      },
+    ];
+    const newResult = await salesModel.create(result);
+    expect(newResult).to.be.an('object');
+    expect(newResult).to.have.property('id');
+    expect(newResult.itemSold).to.be.an('array');
+    expect(newResult.itemSold).to.have.lengthOf(2);
   });
 });

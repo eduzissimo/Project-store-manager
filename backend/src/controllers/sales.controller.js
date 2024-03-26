@@ -23,7 +23,19 @@ const findSalesById = async (req, res) => {
   res.status(httpErrorMap.SUCCESSFUL).json(sale);
 };
 
+const createSales = async (req, res) => {
+  const sales = req.body;
+  const newSale = await salesServices.createSales(sales);
+  if (newSale.err) {
+    return res
+      .status(httpErrorMap.NOT_FOUND)
+      .json(newSale.err);
+  }
+  return res.status(httpErrorMap.CREATED).json(newSale);
+};
+
 module.exports = {
   findAllSales,
   findSalesById,
+  createSales,
 };

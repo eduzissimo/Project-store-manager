@@ -10,8 +10,8 @@ chai.use(sinonChai);
 chai.use(chaiHttp);
 
 const { allSalesMock, salesById } = require('../mocks/sales.mocks');
-const sales = require('../../../src/services/sales.services');
-const salesController = require('../../../src/controllers/sales.controller');
+const { salesServices } = require('../../../src/services');
+const { salesController } = require('../../../src/controllers');
 
 describe('Testa o controller de sales', () => {
   afterEach(function () {
@@ -19,7 +19,7 @@ describe('Testa o controller de sales', () => {
   });
 
   it('Verifica se a função findAllSales retorna todos os produtos', async () => {
-    sinon.stub(sales, 'findAllSales').resolves(allSalesMock);
+    sinon.stub(salesServices, 'findAllSales').resolves(allSalesMock);
 
     const req = {};
     const res = {
@@ -31,7 +31,7 @@ describe('Testa o controller de sales', () => {
   });
 
   it('Verifica se caso não encontre nenhum produto, retorna erro 404', async () => {
-    sinon.stub(sales, 'findAllSales').resolves(null);
+    sinon.stub(salesServices, 'findAllSales').resolves(null);
     const req = {};
     const res = {
       status: sinon.stub().returnsThis(),
@@ -42,7 +42,7 @@ describe('Testa o controller de sales', () => {
   });
 
   it('Verifica se a função findSalesById retorna produtos pelo id', async () => {
-    sinon.stub(sales, 'findSalesById').resolves(salesById);
+    sinon.stub(salesServices, 'findSalesById').resolves(salesById);
     const req = {
       params: {
         id: 1,
@@ -57,7 +57,7 @@ describe('Testa o controller de sales', () => {
   });
 
   it('Verifica se caso não encontre nenhum produto pelo id, retorna erro 404', async () => {
-    sinon.stub(sales, 'findSalesById').resolves(null);
+    sinon.stub(salesServices, 'findSalesById').resolves(null);
     const req = {
       params: {
         id: 1,
@@ -69,5 +69,41 @@ describe('Testa o controller de sales', () => {
     };
     await salesController.findSalesById(req, res);
     expect(res.status).to.have.been.calledWith(404);
+  });
+
+  it('Verifica se a função createSale cria um novo produto', async () => {
+    const newSalesData = [
+      {
+        productId: 1,
+        quantity: 1,
+      },
+      {
+        productId: 2,
+        quantity: 5,
+      },
+    ];
+    sinon.stub(salesServices, 'createSales').resolves({
+      id: 3,
+      itemSold: [
+        {
+          productId: 1,
+          quantity: 1,
+        },
+        {
+          productId: 2,
+          quantity: 5,
+        },
+      ],
+    });
+
+    const req = {
+      body: newSalesData,
+    };
+    const res = {
+      status: sinon.stub().returnsThis(),
+      json: sinon.stub(),
+    };
+    await salesController.createSales(req, res);
+    expect(res.status).to.have.been.calledWith(201);
   });
 });

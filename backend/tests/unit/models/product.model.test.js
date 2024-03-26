@@ -10,7 +10,7 @@ chai.use(sinonChai);
 chai.use(chaiHttp);
 
 const connection = require('../../../src/models/connection');
-const products = require('../../../src/models/products.model');
+const { productsModel } = require('../../../src/models');
 
 describe('Testando o model de produtos', function () {
   afterEach(function () {
@@ -29,14 +29,14 @@ describe('Testando o model de produtos', function () {
         },
       ],
     ]);
-    const result = await products.findAll();
+    const result = await productsModel.findAll();
     expect(result).to.be.an('array');
     expect(result.length).to.be.equal(2);
   });
 
   it('Verifica se quando nulo a função findAll retorna um array vazio', async function () {
     sinon.stub(connection, 'query').resolves([[]]);
-    const result = await products.findAll();
+    const result = await productsModel.findAll();
     expect(result).to.be.an('array');
     expect(result.length).to.be.equal(0);
   });
@@ -50,24 +50,20 @@ describe('Testando o model de produtos', function () {
         },
       ],
     ]);
-    const result = await products.findById(1);
+    const result = await productsModel.findById(1);
     expect(result).to.be.an('object');
     expect(result.id).to.be.equal(1);
   });
 
   it('Verifica se quando nulo a função findProductsById retorna null', async function () {
     sinon.stub(connection, 'query').resolves([[]]);
-    const result = await products.findById(1);
+    const result = await productsModel.findById(1);
     expect(result).to.be.equal(null);
   });
 
   it('Verifica a função create', async function () {
-    sinon.stub(connection, 'query').resolves([
-      {
-        insertId: 1,
-      },
-    ]);
-    const result = await products.create('Martelo de Thor');
+    sinon.stub(connection, 'query').resolves([{ insertId: 1 }]);
+    const result = await productsModel.create(1, 'Martelo de Thor');
     expect(result).to.be.an('object');
     expect(result).to.have.property('id');
     expect(result).to.have.property('name');

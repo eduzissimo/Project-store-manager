@@ -30,4 +30,38 @@ describe('Testando o service de sales', function () {
     const result = await salesServices.findSalesById(1);
     expect(result).to.equal(null);
   });
+
+  it('Verifica a funcionalidade de createSale', async function () {
+    const newSalesData = [
+      {
+        productId: 1,
+        quantity: 1,
+      },
+      {
+        productId: 2,
+        quantity: 5,
+      },
+    ];
+    sinon.stub(sales, 'findById').resolves({
+      id: 1,
+      name: 'Product 1',
+      price: 10,
+      quantity: 10,
+    });
+    sinon.stub(sales, 'create').resolves({
+      id: 3,
+      itemSold: [
+        {
+          productId: 1,
+          quantity: 1,
+        },
+        {
+          productId: 2,
+          quantity: 5,
+        },
+      ],
+    });
+    const result = await salesServices.createSales(newSalesData);
+    expect(result).to.be.an('object');
+  });
 });

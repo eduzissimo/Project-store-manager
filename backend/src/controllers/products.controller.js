@@ -25,17 +25,8 @@ const findProductsById = async (req, res) => {
 
 const createProduct = async (req, res) => {
   const { name } = req.body;
-  try {
-    const newProduct = await productsServices.createProduct(name);
-    res
-      .status(httpErrorMap.CREATED)
-      .json(newProduct);
-  } catch (error) {
-    console.error('Error registering the product:', error);
-    res
-      .status(httpErrorMap.INTERNAL_SERVER_ERROR)
-      .json({ message: 'Error registering the product' });
-  }
+  const newProduct = await productsServices.createProduct(name);
+  res.status(httpErrorMap.CREATED).json(newProduct);
 };
 
 module.exports = {

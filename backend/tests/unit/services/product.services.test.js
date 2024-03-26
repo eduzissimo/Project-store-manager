@@ -9,9 +9,9 @@ chai.use(chaiHttp);
 const { expect } = chai;
 const { describe, it } = mocha;
 
-const productsServices = require('../../../src/services/product.services');
-const product = require('../../../src/models/products.model');
-const { allProductsMock } = require('../mocks/product.mocks');
+const { productsServices } = require('../../../src/services');
+const { productsModel } = require('../../../src/models');
+const { allProductsMock, productIdMock } = require('../mocks/product.mocks');
 
 describe('Testando o products services', function () {
   afterEach(function () {
@@ -19,27 +19,27 @@ describe('Testando o products services', function () {
   });
 
   it('Verifica a função findAllProducts', async function () {
-    sinon.stub(product, 'findAll').resolves(allProductsMock);
+    sinon.stub(productsModel, 'findAll').resolves(allProductsMock);
     const result = await productsServices.findAllProducts();
     expect(result).to.be.an('array');
-    expect(result.length).to.be.equal(2);
+    expect(result).to.have.lengthOf(2);
   });
 
   it('Verifica a função findProductsById', async function () {
-    sinon.stub(product, 'findById').resolves({ id: 1, name: 'Martelo de Thor' });
+    sinon.stub(productsModel, 'findById').resolves(productIdMock);
     const result = await productsServices.findProductsById(1);
     expect(result).to.be.an('object');
     expect(result.id).to.be.equal(1);
   });
 
   it('Verifica se quando nulo a função findProductsById retorna null', async function () {
-    sinon.stub(product, 'findById').resolves(null);
+    sinon.stub(productsModel, 'findById').resolves(null);
     const result = await productsServices.findProductsById(1);
     expect(result).to.be.equal(null);
   });
 
   it('Verifica a função createProducts', async function () {
-    sinon.stub(product, 'create').resolves({ id: 1, name: 'Martelo de Thor' });
+    sinon.stub(productsModel, 'create').resolves({ id: 1, name: 'Martelo de Thor' });
     const result = await productsServices.createProduct('Martelo de Thor');
     expect(result).to.be.an('object');
     expect(result.id).to.be.equal(1);

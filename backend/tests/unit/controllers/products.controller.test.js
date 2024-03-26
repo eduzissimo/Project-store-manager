@@ -78,7 +78,7 @@ describe('Testando o products controller', function () {
     it('Verifica se cria um product novo', async function () {
       const req = {
         body: {
-          name: 'Produto Teste',
+          name: 'Martelo de Thor',
         },
       };
       const res = {
