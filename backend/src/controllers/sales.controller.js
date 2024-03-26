@@ -1,8 +1,8 @@
-const sales = require('../services/sales.services');
+const { salesServices } = require('../services');
 const httpErrorMap = require('../utils/mapStatusHTTP');
 
 const findAllSales = async (_req, res) => {
-  const allSales = await sales.findAllSales();
+  const allSales = await salesServices.findAllSales();
   if (!allSales) {
     return res
       .status(httpErrorMap.NOT_FOUND)
@@ -13,7 +13,7 @@ const findAllSales = async (_req, res) => {
 
 const findSalesById = async (req, res) => {
   const { id } = req.params;
-  const sale = await sales.findSalesById(id);
+  const sale = await salesServices.findSalesById(id);
 
   if (!sale) {
     return res

@@ -1,9 +1,9 @@
-const sales = require('../models/sales.model');
+const { salesModel } = require('../models');
 
-const findAllSales = async () => sales.findAll();
+const findAllSales = async () => salesModel.findAll();
 
 const findSalesById = async (id) => {
-  const sale = await sales.findById(id);
+  const sale = await salesModel.findById(id);
 
   if (!sale) return null;
   return sale;

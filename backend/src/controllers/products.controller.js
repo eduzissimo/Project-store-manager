@@ -1,8 +1,8 @@
-const products = require('../services/product.services');
+const { productsServices } = require('../services');
 const httpErrorMap = require('../utils/mapStatusHTTP');
 
 const findAllProducts = async (_req, res) => {
-  const productsList = await products.findAllProducts();
+  const productsList = await productsServices.findAllProducts();
   if (!productsList) {
     return res
       .status(httpErrorMap.NOT_FOUND)
@@ -13,7 +13,7 @@ const findAllProducts = async (_req, res) => {
 
 const findProductsById = async (req, res) => {
   const { id } = req.params;
-  const product = await products.findProductsById(id);
+  const product = await productsServices.findProductsById(id);
 
   if (!product) {
     return res
@@ -26,7 +26,7 @@ const findProductsById = async (req, res) => {
 const createProduct = async (req, res) => {
   const { name } = req.body;
   try {
-    const newProduct = await products.createProduct(name);
+    const newProduct = await productsServices.createProduct(name);
     res
       .status(httpErrorMap.CREATED)
       .json(newProduct);

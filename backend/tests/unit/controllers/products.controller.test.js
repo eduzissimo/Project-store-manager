@@ -10,8 +10,8 @@ const { expect } = chai;
 const { describe, it } = mocha;
 
 const { productIdMock, allProductsMock } = require('../mocks/product.mocks');
-const productsServices = require('../../../src/services/product.services');
-const productsController = require('../../../src/controllers/products.controller');
+const { productsServices } = require('../../../src/services');
+const { productsController } = require('../../../src/controllers');
 
 describe('Testando o products controller', function () {
   afterEach(function () {
