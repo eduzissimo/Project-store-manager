@@ -23,6 +23,7 @@
     "postinstall": "npm install --prefix __tests__ && npm install --prefix backend"
   },
   "dependencies": {
-    "camelize": "^1.0.1"
+    "camelize": "^1.0.1",
+    "joi": "^17.12.2"
   }
 }
