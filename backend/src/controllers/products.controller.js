@@ -1,20 +1,45 @@
-const products = require('../models/products.model');
+const products = require('../services/product.services');
+const httpErrorMap = require('../utils/mapStatusHTTP');
 
-const findAll = async (_req, res) => {
-  const productsList = await products.findAll();
-  if (!productsList) return res.status(404).json({ message: 'Product not found' });
-  res.status(200).json(productsList);
+const findAllProducts = async (_req, res) => {
+  const productsList = await products.findAllProducts();
+  if (!productsList) {
+    return res
+      .status(httpErrorMap.NOT_FOUND)
+      .json({ message: 'Products not found' });
+  }
+  res.status(httpErrorMap.SUCCESSFUL).json(productsList);
 };
 
-const findById = async (req, res) => {
+const findProductsById = async (req, res) => {
   const { id } = req.params;
-  const product = await products.findById(id);
+  const product = await products.findProductsById(id);
 
-  if (!product) return res.status(404).json({ message: 'Product not found' });
-  return res.status(200).json(product);
+  if (!product) {
+    return res
+      .status(httpErrorMap.NOT_FOUND)
+      .json({ message: 'Product not found' });
+  }
+  return res.status(httpErrorMap.SUCCESSFUL).json(product);
+};
+
+const createProduct = async (req, res) => {
+  const { name } = req.body;
+  try {
+    const newProduct = await products.createProduct(name);
+    res
+      .status(httpErrorMap.CREATED)
+      .json(newProduct);
+  } catch (error) {
+    console.error('Error registering the product:', error);
+    res
+      .status(httpErrorMap.INTERNAL_SERVER_ERROR)
+      .json({ message: 'Error registering the product' });
+  }
 };
 
 module.exports = {
-  findAll,
-  findById,
+  findAllProducts,
+  findProductsById,
+  createProduct,
 };
