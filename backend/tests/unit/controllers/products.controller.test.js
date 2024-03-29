@@ -19,111 +19,133 @@ describe('Testando o products controller', function () {
   });
 
   describe('Verifica a função findAll do products controller', function () {
-    it('Verifica se retorna todos os produtos', async function () {
-      sinon.stub(productsServices, 'findAllProducts').resolves(allProductsMock);
-      const req = {};
-      const res = {
-        status: sinon.stub().returnsThis(),
-        json: sinon.stub(),
-      };
-      await productsController.findAllProducts(req, res);
-      expect(res.status).to.have.been.calledWith(200);
+    describe('findAllProducts', function () {
+      it('Verifica se retorna todos os produtos', async function () {
+        sinon
+          .stub(productsServices, 'findAllProducts')
+          .resolves(allProductsMock);
+        const req = {};
+        const res = {
+          status: sinon.stub().returnsThis(),
+          json: sinon.stub(),
+        };
+        await productsController.findAllProducts(req, res);
+        expect(res.status).to.have.been.calledWith(200);
+      });
+
+      it('Verifica se retorna o erro 404 quando não encontra o produto', async function () {
+        sinon.stub(productsServices, 'findAllProducts').resolves(null);
+        const req = {};
+        const res = {
+          status: sinon.stub().returnsThis(),
+          json: sinon.stub(),
+        };
+        await productsController.findAllProducts(req, res);
+        expect(res.status).to.have.been.calledWith(404);
+      });
     });
 
-    it('Verifica se retorna o erro 404 quando não encontra o produto', async function () {
-      sinon.stub(productsServices, 'findAllProducts').resolves(null);
-      const req = {};
-      const res = {
-        status: sinon.stub().returnsThis(),
-        json: sinon.stub(),
-      };
-      await productsController.findAllProducts(req, res);
-      expect(res.status).to.have.been.calledWith(404);
-    });
-  });
+    describe('Testando o findProductsById do products controller', function () {
+      it('Verifica se retorna o produto', async function () {
+        sinon
+          .stub(productsServices, 'findProductsById')
+          .resolves(productIdMock);
+        const req = {
+          params: {
+            id: 1,
+          },
+        };
+        const res = {
+          status: sinon.stub().returnsThis(),
+          json: sinon.stub(),
+        };
+        await productsController.findProductsById(req, res);
+        expect(res.status).to.have.been.calledWith(200);
+      });
 
-  describe('Testando o findProductsById do products controller', function () {
-    it('Verifica se retorna o produto', async function () {
-      sinon.stub(productsServices, 'findProductsById').resolves(productIdMock);
-      const req = {
-        params: {
-          id: 1,
-        },
-      };
-      const res = {
-        status: sinon.stub().returnsThis(),
-        json: sinon.stub(),
-      };
-      await productsController.findProductsById(req, res);
-      expect(res.status).to.have.been.calledWith(200);
-    });
-
-    it('Verifica se retorna o erro 404 quando não encontra o produto pelo id', async function () {
-      sinon.stub(productsServices, 'findProductsById').resolves(null);
-      const req = {
-        params: {
-          id: 9,
-        },
-      };
-      const res = {
-        status: sinon.stub().returnsThis(),
-        json: sinon.stub(),
-      };
-      await productsController.findProductsById(req, res);
-      expect(res.status).to.have.been.calledWith(404);
-    });
-  });
-
-  describe('Verifica a função createProducts do products controller', function () {
-    it('Verifica se cria um product novo', async function () {
-      const req = {
-        body: {
-          name: 'Martelo de Thor',
-        },
-      };
-      const res = {
-        status: sinon.stub().returnsThis(),
-        json: sinon.stub(),
-      };
-      await productsController.createProduct(req, res);
-      expect(res.status).to.have.been.calledWith(201);
-    });
-  });
-
-  describe('Testando o endpoint de atualização de produto', function () {
-    sinon.stub(productsServices, 'updateProduct').resolves(productIdMock);
-    const req = {
-      params: { id: 1 },
-      body: { name: 'Martelo do Batman' },
-    };
-    const res = {
-      status: sinon.stub().returnsThis(),
-      json: sinon.stub(),
-    };
-
-    afterEach(function () {
-      sinon.resetHistory();
+      it('Verifica se retorna o erro 404 quando não encontra o produto pelo id', async function () {
+        sinon.stub(productsServices, 'findProductsById').resolves(null);
+        const req = {
+          params: {
+            id: 9,
+          },
+        };
+        const res = {
+          status: sinon.stub().returnsThis(),
+          json: sinon.stub(),
+        };
+        await productsController.findProductsById(req, res);
+        expect(res.status).to.have.been.calledWith(404);
+      });
     });
 
-    it('Verifica se realiza o update de um produto', async function () {
-      await productsController.updateProduct(req, res);
-      expect(res.status).to.have.been.calledWith(200);
+    describe('Função createProducts do products controller', function () {
+      it('Verifica se cria um product novo', async function () {
+        const req = {
+          body: {
+            name: 'Martelo de Thor',
+          },
+        };
+        const res = {
+          status: sinon.stub().returnsThis(),
+          json: sinon.stub(),
+        };
+        await productsController.createProduct(req, res);
+        expect(res.status).to.have.been.calledWith(201);
+      });
     });
 
-    it('should return 404 if product does not exist', async () => {
-      sinon
-        .stub(productsServices, 'updateProduct')
-        .throws(new Error('Product not found'));
-      const req1 = {
-        params: { id: 1 },
-        body: { name: 'Martelo do Batman' },
-      };
-      const res1 = {
-        status: sinon.stub().returnsThis(),
-        json: sinon.stub(),
-      };
-      await productsController.updateProduct(req1, res1);
-      expect(res1.status).to.have.been.calledWith(404);
+    describe('Função updateProduct', function () {
+      it('Verifica se realiza o update de um produto', async function () {
+        sinon.stub(productsServices, 'updateProduct').resolves(productIdMock);
+        const req = {
+          params: {
+            id: 1,
+          },
+          body: {
+            name: 'Martelo do Batman',
+          },
+        };
+        const res = {
+          status: sinon.stub().returnsThis(),
+          json: sinon.stub(),
+        };
+        await productsController.updateProduct(req, res);
+        expect(res.status).to.have.been.calledWith(200);
+      });
+
+      it('Verifica se retorna 404 quando o produto não é encontrado', async () => {
+        sinon
+          .stub(productsServices, 'updateProduct')
+          .throws(new Error('Product not found'));
+        const req1 = {
+          params: { id: 1 },
+          body: { name: 'Martelo do Thor' },
+        };
+        const res1 = {
+          status: sinon.stub().returnsThis(),
+          json: sinon.stub(),
+        };
+        await productsController.updateProduct(req1, res1);
+        expect(res1.status).to.have.been.calledWith(404);
+      });
+
+      describe('Função deleteProducts', function () {
+        it('Verifica a função deleteProducts', async function () {
+          sinon.stub(productsServices, 'deleteProduct').resolves();
+          const req = {
+            params: {
+              id: 1,
+            },
+          };
+          const res = {
+            status: sinon.stub().returnsThis(),
+            json: sinon.stub(),
+          };
+          await productsController.deleteProduct(req, res);
+          expect(res.status).to.have.been.calledWith(204);
+        });
+      });
     });
   });
 });

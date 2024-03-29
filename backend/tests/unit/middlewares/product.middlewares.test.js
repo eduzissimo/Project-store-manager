@@ -36,7 +36,9 @@ describe('Testando o middleware de validação de produtos', function () {
     req.body.name = '';
     middlewareProducts.validateProduct(req, res, next);
     expect(res.status).to.have.been.calledWith(400);
-    expect(res.status().json).to.have.been.calledWith({ message: '"name" is required' });
+    expect(res.status().json).to.have.been.calledWith({
+      message: '"name" is required',
+    });
   });
 
   it('Verifica se retorna erro quando o nome é curto demais', () => {

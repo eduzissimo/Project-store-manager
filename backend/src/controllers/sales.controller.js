@@ -37,8 +37,22 @@ const updateSales = async (req, res) => {
   const { saleId, productId } = req.params;
   const { quantity } = req.body;
   try {
-    const updatedSale = await salesServices.updateSales(saleId, productId, quantity);
+    const updatedSale = await salesServices.updateSales(
+      saleId,
+      productId,
+      quantity,
+    );
     res.status(httpErrorMap.SUCCESSFUL).json(updatedSale);
+  } catch (error) {
+    res.status(httpErrorMap.NOT_FOUND).json({ message: error.message });
+  }
+};
+
+const deleteSales = async (req, res) => {
+  const { id } = req.params;
+  try {
+    await salesServices.deleteSales(id);
+    res.status(httpErrorMap.NO_CONTENT).end();
   } catch (error) {
     res.status(httpErrorMap.NOT_FOUND).json({ message: error.message });
   }
@@ -49,4 +63,5 @@ module.exports = {
   findSalesById,
   createSales,
   updateSales,
+  deleteSales,
 };

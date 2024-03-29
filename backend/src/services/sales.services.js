@@ -25,8 +25,14 @@ const updateSales = async (saleId, productId, quantity) => {
   const sale = await salesModel.findById(saleId);
   if (!sale) throw new Error('Sale not found');
   const product = await salesModel.findById(productId);
-  if (!product) throw new Error('Product not found');
+  if (!product) throw new Error('Product not found in sale');
   return salesModel.update(saleId, productId, quantity);
+};
+
+const deleteSales = async (id) => {
+  const sale = await salesModel.findById(id);
+  if (!sale) throw new Error('Sale not found');
+  return salesModel.del(id);
 };
 
 module.exports = {
@@ -34,4 +40,5 @@ module.exports = {
   findSalesById,
   createSales,
   updateSales,
+  deleteSales,
 };

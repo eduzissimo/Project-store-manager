@@ -6,20 +6,33 @@ const findAll = async () => {
 };
 
 const findById = async (id) => {
-  const [product] = await connection.query('SELECT * FROM products WHERE id = ?', [id]);
+  const [product] = await connection.query(
+    'SELECT * FROM products WHERE id = ?',
+    [id],
+  );
 
   if (product.length === 0) return null;
   return product[0];
 };
 
 const create = async (name) => {
-  const [{ insertId }] = await connection.query('INSERT INTO products (name) VALUES (?)', [name]);
+  const [{ insertId }] = await connection.query(
+    'INSERT INTO products (name) VALUES (?)',
+    [name],
+  );
   return { id: insertId, name };
 };
 
 const update = async (id, name) => {
-  await connection.query('UPDATE products SET name = ? WHERE id = ?', [name, id]);
+  await connection.query('UPDATE products SET name = ? WHERE id = ?', [
+    name,
+    id,
+  ]);
   return { id: Number(id), name };
+};
+
+const del = async (id) => {
+  await connection.query('DELETE FROM products WHERE id = ?', [id]);
 };
 
 module.exports = {
@@ -27,4 +40,5 @@ module.exports = {
   findById,
   create,
   update,
+  del,
 };

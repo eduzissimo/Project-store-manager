@@ -28,14 +28,16 @@ const create = async (sales) => {
   const tableQuery = 'INSERT INTO sales (date) VALUES (?)';
   const [{ insertId: id }] = await connection.query(tableQuery, [new Date()]);
   const query = 'INSERT INTO sales_products (sale_id, product_id, quantity) VALUES (?, ?, ?)';
-  await Promise.all(sales.map(async (sale) => {
-    const { productId, quantity } = sale;
-    await connection.query(query, [id, productId, quantity]);
-  }));
+  await Promise.all(
+    sales.map(async (sale) => {
+      const { productId, quantity } = sale;
+      await connection.query(query, [id, productId, quantity]);
+    }),
+  );
   return {
     id,
-    itemsSold: [...sales,
-    ] };
+    itemsSold: [...sales],
+  };
 };
 
 const update = async (saleId, productId, quantity) => {
@@ -50,9 +52,14 @@ const update = async (saleId, productId, quantity) => {
   };
 };
 
+const del = async (id) => {
+  await connection.query('DELETE FROM sales WHERE id = ?', [id]);
+};
+
 module.exports = {
   findAll,
   findById,
   create,
   update,
+  del,
 };
