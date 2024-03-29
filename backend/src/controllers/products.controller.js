@@ -2,49 +2,57 @@ const { productsServices } = require('../services');
 const httpErrorMap = require('../utils/mapStatusHTTP');
 
 const findAllProducts = async (_req, res) => {
-  const productsList = await productsServices.findAllProducts();
-  if (!productsList) {
-    return res
-      .status(httpErrorMap.NOT_FOUND)
-      .json({ message: 'Products not found' });
+  try {
+    const productsList = await productsServices.findAllProducts();
+    if (!productsList) {
+      return res.status(httpErrorMap.NOT_FOUND).json({ message: 'Products not found' });
+    }
+    res.status(httpErrorMap.SUCCESSFUL).json(productsList);
+  } catch (error) {
+    res.status(httpErrorMap.INTERNAL_SERVER_ERROR).json({ message: error.message });
   }
-  res.status(httpErrorMap.SUCCESSFUL).json(productsList);
 };
 
 const findProductsById = async (req, res) => {
-  const { id } = req.params;
-  const product = await productsServices.findProductsById(id);
+  try {
+    const { id } = req.params;
+    const product = await productsServices.findProductById(id);
 
-  if (!product) {
-    return res
-      .status(httpErrorMap.NOT_FOUND)
-      .json({ message: 'Product not found' });
+    if (!product) {
+      return res.status(httpErrorMap.NOT_FOUND).json({ message: 'Product not found' });
+    }
+    res.status(httpErrorMap.SUCCESSFUL).json(product);
+  } catch (error) {
+    res.status(httpErrorMap.INTERNAL_SERVER_ERROR).json({ message: error.message });
   }
-  return res.status(httpErrorMap.SUCCESSFUL).json(product);
 };
 
 const createProduct = async (req, res) => {
-  const { name } = req.body;
-  const newProduct = await productsServices.createProduct(name);
-  res.status(httpErrorMap.CREATED).json(newProduct);
+  try {
+    const { name } = req.body;
+    const newProduct = await productsServices.createProduct(name);
+    res.status(httpErrorMap.CREATED).json(newProduct);
+  } catch (error) {
+    res.status(httpErrorMap.INTERNAL_SERVER_ERROR).json({ message: error.message });
+  }
 };
 
 const updateProduct = async (req, res) => {
-  const { id } = req.params;
-  const { name } = req.body;
   try {
+    const { id } = req.params;
+    const { name } = req.body;
     const updatedProduct = await productsServices.updateProduct(id, name);
-    return res.status(httpErrorMap.SUCCESSFUL).json(updatedProduct);
+    res.status(httpErrorMap.SUCCESSFUL).json(updatedProduct);
   } catch (error) {
-    return res.status(httpErrorMap.NOT_FOUND).json({ message: error.message });
+    res.status(httpErrorMap.NOT_FOUND).json({ message: error.message });
   }
 };
 
 const deleteProduct = async (req, res) => {
-  const { id } = req.params;
   try {
+    const { id } = req.params;
     await productsServices.deleteProduct(id);
-    res.status(httpErrorMap.NO_CONTENT).json({ message: 'Product not found' });
+    res.status(httpErrorMap.NO_CONTENT).end();
   } catch (error) {
     res.status(httpErrorMap.NOT_FOUND).json({ message: error.message });
   }

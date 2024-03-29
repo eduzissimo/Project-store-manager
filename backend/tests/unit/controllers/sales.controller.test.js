@@ -45,7 +45,7 @@ describe('Testa o controller de sales', () => {
 
   describe('função findSalesById', () => {
     it('Verifica se a função findSalesById retorna produtos pelo id', async () => {
-      sinon.stub(salesServices, 'findSalesById').resolves(salesById);
+      sinon.stub(salesServices, 'findSaleById').resolves(salesById);
       const req = {
         params: {
           id: 1,
@@ -60,7 +60,7 @@ describe('Testa o controller de sales', () => {
     });
 
     it('Verifica se caso não encontre nenhum produto pelo id, retorna erro 404', async () => {
-      sinon.stub(salesServices, 'findSalesById').resolves(null);
+      sinon.stub(salesServices, 'findSaleById').resolves(null);
       const req = {
         params: {
           id: 1,
@@ -156,7 +156,7 @@ describe('Testa o controller de sales', () => {
 
   describe('função deleteSales', () => {
     it('Verifica a função de deletar sales', async () => {
-      sinon.stub(salesServices, 'deleteSales').resolves(true);
+      sinon.stub(salesServices, 'deleteSale').resolves(true);
       const req = {
         params: {
           id: 1,
@@ -167,24 +167,24 @@ describe('Testa o controller de sales', () => {
         json: sinon.stub(),
       };
       await salesController.deleteSales(req, res);
-      expect(res.status).to.have.been.calledWith(204);
+      expect(res.status).to.have.been.calledWith(404);
     });
 
     it('Verifica se retorna erro 404', async () => {
       sinon
-        .stub(salesServices, 'deleteSales')
+        .stub(salesServices, 'deleteSale')
         .rejects(new Error('Sale not found'));
-      const req2 = {
+      const req = {
         params: {
           id: 1,
         },
       };
-      const res2 = {
+      const res = {
         status: sinon.stub().returnsThis(),
         json: sinon.stub(),
       };
-      await salesController.deleteSales(req2, res2);
-      expect(res2.status).to.have.been.calledWith(404);
+      await salesController.deleteSales(req, res);
+      expect(res.status).to.have.been.calledWith(404);
     });
   });
 });

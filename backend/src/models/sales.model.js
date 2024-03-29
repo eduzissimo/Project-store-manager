@@ -3,10 +3,10 @@ const connection = require('./connection');
 
 const findAll = async () => {
   const query = `
-  SELECT  sale_id, sales.date, product_id, quantity
-  FROM sales_products
-  JOIN sales ON sales.id = sales_products.sale_id
-  ORDER BY sale_id, product_id;
+    SELECT sale_id, sales.date, product_id, quantity
+    FROM sales_products
+    JOIN sales ON sales.id = sales_products.sale_id
+    ORDER BY sale_id, product_id;
   `;
   const [sales] = await connection.query(query);
   return camelize(sales);
@@ -14,23 +14,21 @@ const findAll = async () => {
 
 const findById = async (id) => {
   const query = `
-  SELECT sales.date, product_id, quantity
-  FROM sales_products
-  JOIN sales ON sales.id = sales_products.sale_id
-  WHERE sales.id = ?;
+    SELECT sales.date, product_id, quantity
+    FROM sales_products
+    JOIN sales ON sales.id = sales_products.sale_id
+    WHERE sales.id = ?;
   `;
   const [sale] = await connection.query(query, [id]);
-  if (sale.length === 0) return null;
-  return camelize(sale);
+  return sale.length ? camelize(sale) : null;
 };
 
 const create = async (sales) => {
-  const tableQuery = 'INSERT INTO sales (date) VALUES (?)';
-  const [{ insertId: id }] = await connection.query(tableQuery, [new Date()]);
+  const [{ insertId: id }] = await connection
+    .query('INSERT INTO sales (date) VALUES (?)', [new Date()]);
   const query = 'INSERT INTO sales_products (sale_id, product_id, quantity) VALUES (?, ?, ?)';
   await Promise.all(
-    sales.map(async (sale) => {
-      const { productId, quantity } = sale;
+    sales.map(async ({ productId, quantity }) => {
       await connection.query(query, [id, productId, quantity]);
     }),
   );

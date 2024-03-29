@@ -32,13 +32,13 @@ describe('Testando o products services', function () {
   describe('Função findProductsById', function () {
     it('Verifica a função findProductsById', async function () {
       sinon.stub(productsModel, 'findById').resolves(productIdMock);
-      const result = await productsServices.findProductsById(1);
+      const result = await productsServices.findProductById(1);
       expect(result).to.be.an('object');
     });
 
     it('Verifica se quando nulo a função findProductsById retorna null', async function () {
       sinon.stub(productsModel, 'findById').resolves(null);
-      const result = await productsServices.findProductsById(1);
+      const result = await productsServices.findProductById(1);
       expect(result).to.be.equal(null);
     });
   });

@@ -1,44 +1,45 @@
 const { salesModel } = require('../models');
 
-const findAllSales = async () => salesModel.findAll();
+const findAllSales = () => salesModel.findAll();
 
-const findSalesById = async (id) => {
+const findSaleById = async (id) => {
   const sale = await salesModel.findById(id);
+  return sale || null;
+};
 
-  if (!sale) return null;
-  return sale;
+const validateProductsInSale = async (sales) => {
+  const validationId = await Promise.all(sales.map(async (item) => {
+    const productInSale = await salesModel.findById(item.productId);
+    return productInSale !== undefined;
+  }));
+  if (!validationId.every((idProduct) => idProduct)) {
+    throw new Error('Product not found');
+  }
 };
 
 const createSales = async (sales) => {
-  const validationId = await Promise.all(sales.map(async (item) => {
-    const productsInSale = await salesModel.findById(item.productId);
-    return productsInSale !== undefined;
-  }));
-  if (validationId.every((idProduct) => idProduct) === false) {
-    throw new Error('Product not found');
-  }
-  const newSale = await salesModel.create(sales);
-  return newSale;
+  await validateProductsInSale(sales);
+  return salesModel.create(sales);
 };
 
 const updateSales = async (saleId, productId, quantity) => {
-  const sale = await salesModel.findById(saleId);
+  const sale = await findSaleById(saleId);
   if (!sale) throw new Error('Sale not found');
   const product = await salesModel.findById(productId);
   if (!product) throw new Error('Product not found in sale');
   return salesModel.update(saleId, productId, quantity);
 };
 
-const deleteSales = async (id) => {
-  const sale = await salesModel.findById(id);
+const deleteSale = async (id) => {
+  const sale = await findSaleById(id);
   if (!sale) throw new Error('Sale not found');
   return salesModel.del(id);
 };
 
 module.exports = {
   findAllSales,
-  findSalesById,
+  findSaleById,
   createSales,
   updateSales,
-  deleteSales,
+  deleteSale,
 };

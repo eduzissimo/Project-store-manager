@@ -48,7 +48,7 @@ describe('Testando o products controller', function () {
     describe('Testando o findProductsById do products controller', function () {
       it('Verifica se retorna o produto', async function () {
         sinon
-          .stub(productsServices, 'findProductsById')
+          .stub(productsServices, 'findProductById')
           .resolves(productIdMock);
         const req = {
           params: {
@@ -64,7 +64,7 @@ describe('Testando o products controller', function () {
       });
 
       it('Verifica se retorna o erro 404 quando não encontra o produto pelo id', async function () {
-        sinon.stub(productsServices, 'findProductsById').resolves(null);
+        sinon.stub(productsServices, 'findProductById').resolves(null);
         const req = {
           params: {
             id: 9,

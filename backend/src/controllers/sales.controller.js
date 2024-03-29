@@ -2,25 +2,28 @@ const { salesServices } = require('../services');
 const httpErrorMap = require('../utils/mapStatusHTTP');
 
 const findAllSales = async (_req, res) => {
-  const allSales = await salesServices.findAllSales();
-  if (!allSales) {
-    return res
-      .status(httpErrorMap.NOT_FOUND)
-      .json({ message: 'Sales not found' });
+  try {
+    const allSales = await salesServices.findAllSales();
+    if (!allSales) {
+      return res.status(httpErrorMap.NOT_FOUND).json({ message: 'Sales not found' });
+    }
+    return res.status(httpErrorMap.SUCCESSFUL).json(allSales);
+  } catch (error) {
+    res.status(httpErrorMap.INTERNAL_SERVER_ERROR).json({ message: error.message });
   }
-  return res.status(httpErrorMap.SUCCESSFUL).json(allSales);
 };
 
 const findSalesById = async (req, res) => {
-  const { id } = req.params;
-  const sale = await salesServices.findSalesById(id);
-
-  if (!sale) {
-    return res
-      .status(httpErrorMap.NOT_FOUND)
-      .json({ message: 'Sale not found' });
+  try {
+    const { id } = req.params;
+    const sale = await salesServices.findSaleById(id);
+    if (!sale) {
+      return res.status(httpErrorMap.NOT_FOUND).json({ message: 'Sale not found' });
+    }
+    res.status(httpErrorMap.SUCCESSFUL).json(sale);
+  } catch (error) {
+    res.status(httpErrorMap.INTERNAL_SERVER_ERROR).json({ message: error.message });
   }
-  res.status(httpErrorMap.SUCCESSFUL).json(sale);
 };
 
 const createSales = async (req, res) => {
@@ -34,14 +37,10 @@ const createSales = async (req, res) => {
 };
 
 const updateSales = async (req, res) => {
-  const { saleId, productId } = req.params;
-  const { quantity } = req.body;
   try {
-    const updatedSale = await salesServices.updateSales(
-      saleId,
-      productId,
-      quantity,
-    );
+    const { saleId, productId } = req.params;
+    const { quantity } = req.body;
+    const updatedSale = await salesServices.updateSales(saleId, productId, quantity);
     res.status(httpErrorMap.SUCCESSFUL).json(updatedSale);
   } catch (error) {
     res.status(httpErrorMap.NOT_FOUND).json({ message: error.message });
@@ -49,8 +48,8 @@ const updateSales = async (req, res) => {
 };
 
 const deleteSales = async (req, res) => {
-  const { id } = req.params;
   try {
+    const { id } = req.params;
     await salesServices.deleteSales(id);
     res.status(httpErrorMap.NO_CONTENT).end();
   } catch (error) {

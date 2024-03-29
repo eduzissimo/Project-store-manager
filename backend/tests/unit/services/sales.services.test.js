@@ -27,13 +27,13 @@ describe('Testando o service de sales', function () {
 
   it('Verifica se retorna o objeto correto quando passado um id', async function () {
     sinon.stub(sales, 'findById').resolves(salesById);
-    const result = await salesServices.findSalesById(1);
+    const result = await salesServices.findSaleById(1);
     expect(result).to.be.an('array');
   });
 
   it('Verifica se quando nulo a função findSalesById retorna null', async function () {
     sinon.stub(sales, 'findById').resolves(null);
-    const result = await salesServices.findSalesById(1);
+    const result = await salesServices.findSaleById(1);
     expect(result).to.equal(null);
   });
 
@@ -138,7 +138,7 @@ describe('Testando o service de sales', function () {
     it('Verifica se a função retorna null quando a venda não existe', async function () {
       sinon.stub(sales, 'findById').resolves(null);
       try {
-        await salesServices.deleteSales(1);
+        await salesServices.deleteSale(1);
       } catch (error) {
         expect(error).to.be.an('error');
         expect(error.message).to.be.equal('Sale not found');
@@ -153,13 +153,13 @@ describe('Testando o service de sales', function () {
         quantity: 2,
       });
       sinon.stub(sales, 'del').resolves();
-      await salesServices.deleteSales(1);
+      await salesServices.deleteSale(1);
     });
 
     it('Verifica se a função retorna erro', async function () {
       sinon.stub(sales, 'findById').resolves(null);
       try {
-        await salesServices.deleteSales(1);
+        await salesServices.deleteSale(1);
       } catch (error) {
         expect(error.message).to.equal('Sale not found');
       }
