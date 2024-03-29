@@ -89,4 +89,41 @@ describe('Testando o products controller', function () {
       expect(res.status).to.have.been.calledWith(201);
     });
   });
+
+  describe('Testando o endpoint de atualização de produto', function () {
+    sinon.stub(productsServices, 'updateProduct').resolves(productIdMock);
+    const req = {
+      params: { id: 1 },
+      body: { name: 'Martelo do Batman' },
+    };
+    const res = {
+      status: sinon.stub().returnsThis(),
+      json: sinon.stub(),
+    };
+
+    afterEach(function () {
+      sinon.resetHistory();
+    });
+
+    it('Verifica se realiza o update de um produto', async function () {
+      await productsController.updateProduct(req, res);
+      expect(res.status).to.have.been.calledWith(200);
+    });
+
+    it('should return 404 if product does not exist', async () => {
+      sinon
+        .stub(productsServices, 'updateProduct')
+        .throws(new Error('Product not found'));
+      const req1 = {
+        params: { id: 1 },
+        body: { name: 'Martelo do Batman' },
+      };
+      const res1 = {
+        status: sinon.stub().returnsThis(),
+        json: sinon.stub(),
+      };
+      await productsController.updateProduct(req1, res1);
+      expect(res1.status).to.have.been.calledWith(404);
+    });
+  });
 });

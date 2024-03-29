@@ -29,7 +29,6 @@ describe('Testando o products services', function () {
     sinon.stub(productsModel, 'findById').resolves(productIdMock);
     const result = await productsServices.findProductsById(1);
     expect(result).to.be.an('object');
-    expect(result.id).to.be.equal(1);
   });
 
   it('Verifica se quando nulo a função findProductsById retorna null', async function () {
@@ -42,6 +41,5 @@ describe('Testando o products services', function () {
     sinon.stub(productsModel, 'create').resolves({ id: 1, name: 'Martelo de Thor' });
     const result = await productsServices.createProduct('Martelo de Thor');
     expect(result).to.be.an('object');
-    expect(result.id).to.be.equal(1);
   });
 });

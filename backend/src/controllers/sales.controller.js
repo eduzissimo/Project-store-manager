@@ -24,18 +24,29 @@ const findSalesById = async (req, res) => {
 };
 
 const createSales = async (req, res) => {
-  const sales = req.body;
-  const newSale = await salesServices.createSales(sales);
-  if (newSale.err) {
-    return res
-      .status(httpErrorMap.NOT_FOUND)
-      .json(newSale.err);
+  try {
+    const sale = req.body;
+    const newSale = await salesServices.createSales(sale);
+    res.status(httpErrorMap.CREATED).json(newSale);
+  } catch (error) {
+    res.status(httpErrorMap.NOT_FOUND).json({ message: 'Product not found' });
   }
-  return res.status(httpErrorMap.CREATED).json(newSale);
+};
+
+const updateSales = async (req, res) => {
+  const { saleId, productId } = req.params;
+  const { quantity } = req.body;
+  try {
+    const updatedSale = await salesServices.updateSales(saleId, productId, quantity);
+    res.status(httpErrorMap.SUCCESSFUL).json(updatedSale);
+  } catch (error) {
+    res.status(httpErrorMap.NOT_FOUND).json({ message: error.message });
+  }
 };
 
 module.exports = {
   findAllSales,
   findSalesById,
   createSales,
+  updateSales,
 };

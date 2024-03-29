@@ -13,13 +13,18 @@ const findById = async (id) => {
 };
 
 const create = async (name) => {
-  const [product] = await connection.query('INSERT INTO products (name) VALUES (?)', [name]);
-  const newProductId = product.insertId;
-  return { id: newProductId, name };
+  const [{ insertId }] = await connection.query('INSERT INTO products (name) VALUES (?)', [name]);
+  return { id: insertId, name };
+};
+
+const update = async (id, name) => {
+  await connection.query('UPDATE products SET name = ? WHERE id = ?', [name, id]);
+  return { id: Number(id), name };
 };
 
 module.exports = {
   findAll,
   findById,
   create,
+  update,
 };

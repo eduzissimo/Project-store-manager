@@ -78,7 +78,7 @@ describe('Testando o model de vendas', function () {
     const newResult = await salesModel.create(result);
     expect(newResult).to.be.an('object');
     expect(newResult).to.have.property('id');
-    expect(newResult.itemSold).to.be.an('array');
-    expect(newResult.itemSold).to.have.lengthOf(2);
+    expect(newResult.itemsSold).to.be.an('array');
+    expect(newResult.itemsSold).to.have.lengthOf(2);
   });
 });

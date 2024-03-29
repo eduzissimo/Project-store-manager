@@ -106,4 +106,43 @@ describe('Testa o controller de sales', () => {
     await salesController.createSales(req, res);
     expect(res.status).to.have.been.calledWith(201);
   });
+
+  it('Verifica se a função updateSale atualiza um produto', async () => {
+    const updatedSalesData = [
+      {
+        productId: 1,
+        quantity: 1,
+      },
+      {
+        productId: 2,
+        quantity: 5,
+      },
+    ];
+    sinon.stub(salesServices, 'updateSales').resolves({
+      id: 3,
+      itemSold: [
+        {
+          productId: 1,
+          quantity: 1,
+        },
+        {
+          productId: 2,
+          quantity: 5,
+        },
+      ],
+    });
+
+    const req = {
+      params: {
+        id: 3,
+      },
+      body: updatedSalesData,
+    };
+    const res = {
+      status: sinon.stub().returnsThis(),
+      json: sinon.stub(),
+    };
+    await salesController.updateSales(req, res);
+    expect(res.status).to.have.been.calledWith(200);
+  });
 });

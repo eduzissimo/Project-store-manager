@@ -29,8 +29,20 @@ const createProduct = async (req, res) => {
   res.status(httpErrorMap.CREATED).json(newProduct);
 };
 
+const updateProduct = async (req, res) => {
+  const { id } = req.params;
+  const { name } = req.body;
+  try {
+    const updatedProduct = await productsServices.updateProduct(id, name);
+    return res.status(httpErrorMap.SUCCESSFUL).json(updatedProduct);
+  } catch (error) {
+    return res.status(httpErrorMap.NOT_FOUND).json({ message: error.message });
+  }
+};
+
 module.exports = {
   findAllProducts,
   findProductsById,
   createProduct,
+  updateProduct,
 };
